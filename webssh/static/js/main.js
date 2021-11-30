@@ -178,7 +178,8 @@ jQuery(function($){
       }
     }
 
-    var cols = parseInt(window.innerWidth / style.width, 10) - 1;
+    // 修改处，修改终端宽度
+    var cols = parseInt(window.innerWidth / style.width - 50, 10) - 1;
 
     // 修改处，修改终端高度
     var rows = parseInt(window.innerHeight / style.height - 6, 10);
