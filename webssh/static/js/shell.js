@@ -92,8 +92,9 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
         if (obj.param['nodeId'] < 1000) {
             //  console.log(obj.param['context']); //得到当前点击的节点数据
             let termid = Math.floor(Math.random() * 100000)
+            let csname = 'sta' + termid
             element.tabAdd('demo', {
-                title: '<i class="layui-icon layui-icon-circle-dot ' + obj.param['context'] + '" style="font-size: 10px; color: #4cb450; margin-right: 10px"></i>' + obj.param['context'] //用于演示
+                title: '<i class="layui-icon layui-icon-circle-dot ' + csname + '" style="font-size: 10px; color: #4cb450; margin-right: 10px"></i>' + obj.param['context'] //用于演示
                 , content: '<div id="' + termid + '"></div>'
                 //, content: '<div id="' + 'sttttm1' + '"></div>'
                 //, id: termid //实际使用一般是规定好的id，这里以时间戳模拟下
@@ -117,10 +118,10 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
                             data: {'type': 'user_alias', 'alias': sys_user_name},
                             success: function (res2) {
                                 if (res2['host_key'] !== null) {
-                                    wssh.connect(termid, obj.param['context'], host_data['host_ip'], host_data['host_port'], res2['host_user'], '', res2['host_key'])
+                                    wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], '', res2['host_key'])
                                 } else {
                                     if (res2['host_password'] !== null){
-                                        wssh.connect(termid, obj.param['context'], host_data['host_ip'], host_data['host_port'], res2['host_user'], res2['host_password'])
+                                        wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], res2['host_password'])
                                     } else {
                                         layer.msg('该用户未设定登录密码和key')
                                     }
