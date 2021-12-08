@@ -94,12 +94,9 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
                     }
                     let select_sys_user = '<form class="layui-form" onsubmit="return false">\n' +
                         '  <div class="layui-form-item">\n' +
-                        '    <label class="layui-form-label">单选框</label>\n' +
+                        '    <label class="layui-form-label">用户</label>\n' +
                         '    <div class="layui-input-block">\n' +
                         sys_name_list +
-                        // '      <input type="radio" name="sex" value="男" title="男" checked="">\n' +
-                        // '      <input type="radio" name="sex" value="女" title="女">\n' +
-                        // '      <input type="radio" name="sex" value="禁" title="禁用" disabled="">\n' +
                         '    </div>\n' +
                         '  </div>\n' +
                         '  <div class="layui-form-item">\n' +
