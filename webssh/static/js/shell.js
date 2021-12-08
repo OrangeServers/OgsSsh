@@ -31,26 +31,6 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
         , util = layui.util //Tab的切换功能，切换事件监听等，需要依赖element模块
         , dtree = layui.dtree;
 
-    function get_sys_user_name() {
-        $.ajax({
-            type: "POST",
-            url: ogs_backend_url + "/server/sys/user/name_list",
-            dataType: "JSON",
-            data: {'name': $.cookie('username')},
-            success: function (res) {
-                let name_list = res['msg']
-                let html = ''
-                for (let i of name_list) {
-                    html += '<option value="' + i + '">' + i + '</option>'
-                }
-                $('#orange_sys-user').html(html)
-                layui.form.render('select')
-            }
-        })
-    }
-
-    get_sys_user_name()
-
     function get_tree_list() {
         $.ajax({
             type: "POST",
@@ -100,39 +80,85 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
                 //, id: termid //实际使用一般是规定好的id，这里以时间戳模拟下
                 , id: termid //实际使用一般是规定好的id，这里以时间戳模拟下
             })
-            let sys_user_name = $('#orange_sys-user').val()
-            if (sys_user_name === null) {
-                layer.msg('无可执行系统用户', {icon: 7});
-            } else {
-                $.ajax({
-                    type: "POST",
-                    url: ogs_backend_url + "/server/host/list",
-                    dataType: "JSON",
-                    data: {'type': 'host_alias', 'alias': obj.param['context']},
-                    success: function (res) {
-                        let host_data = res
-                        $.ajax({
-                            type: "POST",
-                            url: ogs_backend_url + "/server/sys/user/list",
-                            dataType: "JSON",
-                            data: {'type': 'user_alias', 'alias': sys_user_name},
-                            success: function (res2) {
-                                if (res2['host_key'] !== null) {
-                                    wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], '', res2['host_key'])
-                                } else {
-                                    if (res2['host_password'] !== null){
-                                        wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], res2['host_password'])
-                                    } else {
-                                        layer.msg('该用户未设定登录密码和key')
-                                    }
-                                }
-                            }
-                        })
+
+            $.ajax({
+                type: "POST",
+                url: ogs_backend_url + "/server/sys/user/name_list",
+                dataType: "JSON",
+                data: {'name': $.cookie('username')},
+                success: function (res) {
+                    let name_list = res['msg']
+                    let sys_name_list = ''
+                    for (let i of name_list) {
+                        sys_name_list += '<input type="radio" name="sex" value="' + i + '" title="' + i + '" checked="">'
                     }
-                })
-                //wssh.connect(termid, '10.0.1.199', 22, 'web', '', '/data/tmp/test/sshkey/通用web用户_rsa')
-                element.tabChange('demo', termid);
-            }
+                    let select_sys_user = '<form class="layui-form" onsubmit="return false">\n' +
+                        '  <div class="layui-form-item">\n' +
+                        '    <label class="layui-form-label">单选框</label>\n' +
+                        '    <div class="layui-input-block">\n' +
+                        sys_name_list +
+                        // '      <input type="radio" name="sex" value="男" title="男" checked="">\n' +
+                        // '      <input type="radio" name="sex" value="女" title="女">\n' +
+                        // '      <input type="radio" name="sex" value="禁" title="禁用" disabled="">\n' +
+                        '    </div>\n' +
+                        '  </div>\n' +
+                        '  <div class="layui-form-item">\n' +
+                        '    <div class="layui-input-block">\n' +
+                        '      <button id="sys_user_conn" type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">确认</button>\n' +
+                        '    </div>\n' +
+                        '  </div>\n' +
+                        '</form>'
+
+                    let user_open = layer.open({
+                        type: 1,
+                        skin: 'layui-layer-rim', //加上边框
+                        area: ['420px', '240px'], //宽高
+                        content: select_sys_user
+                    });
+                    layui.form.render()
+                    $('#sys_user_conn').click(function () {
+                        let user_name = $('.layui-form').serializeArray()[0]['value']
+                        if (user_name === null) {
+                            layer.msg('无可执行系统用户', {icon: 7});
+                            layer.close(user_open)
+                        } else {
+                            $.ajax({
+                                type: "POST",
+                                url: ogs_backend_url + "/server/host/list",
+                                dataType: "JSON",
+                                data: {'type': 'host_alias', 'alias': obj.param['context']},
+                                success: function (res) {
+                                    let host_data = res
+                                    $.ajax({
+                                        type: "POST",
+                                        url: ogs_backend_url + "/server/sys/user/list",
+                                        dataType: "JSON",
+                                        data: {'type': 'user_alias', 'alias': user_name},
+                                        success: function (res2) {
+                                            if (res2['host_key'] !== null) {
+                                                wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], '', res2['host_key'])
+                                                layer.close(user_open)
+                                            } else {
+                                                if (res2['host_password'] !== null) {
+                                                    wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], res2['host_password'])
+                                                    layer.close(user_open)
+                                                } else {
+                                                    layer.msg('该用户未设定登录密码和key')
+                                                    layer.close(user_open)
+                                                }
+                                            }
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+
+            //wssh.connect(termid, '10.0.1.199', 22, 'web', '', '/data/tmp/test/sshkey/通用web用户_rsa')
+            element.tabChange('demo', termid);
+
         }
     })
 
