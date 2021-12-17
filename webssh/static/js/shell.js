@@ -94,14 +94,15 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
                     }
                     let select_sys_user = '<form class="layui-form" onsubmit="return false">\n' +
                         '  <div class="layui-form-item">\n' +
-                        '    <label class="layui-form-label">用户</label>\n' +
-                        '    <div class="layui-input-block">\n' +
+                        // '    <label class="layui-form-label">用户</label>\n' +
+                        '    <div class="layui-input-block" style="margin-left: 5px;">\n' +
                         sys_name_list +
                         '    </div>\n' +
                         '  </div>\n' +
-                        '  <div class="layui-form-item">\n' +
+                        '  <div class="layui-form-item" style="position: absolute;right: 120px;bottom: 0px;">\n' +
                         '    <div class="layui-input-block">\n' +
-                        '      <button id="sys_user_conn" type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">确认</button>\n' +
+                        '      <button id="sys_user_conn" type="submit" class="layui-btn layui-bg-blue" lay-submit="" lay-filter="demo1">确认</button>\n' +
+                        '      <button id="sys_user_exit" type="submit" class="layui-btn layui-bg-red" lay-submit="" lay-filter="demo1">取消</button>\n' +
                         '    </div>\n' +
                         '  </div>\n' +
                         '</form>'
@@ -113,6 +114,9 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
                         content: select_sys_user
                     });
                     layui.form.render()
+                    $('#sys_user_exit').click(function () {
+                        layer.close(user_open)
+                    })
                     $('#sys_user_conn').click(function () {
                         let user_name = $('.layui-form').serializeArray()[0]['value']
                         if (user_name === null) {
