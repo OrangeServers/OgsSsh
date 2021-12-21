@@ -7,6 +7,7 @@ import traceback
 import weakref
 import paramiko
 import tornado.web
+import base64
 
 from concurrent.futures import ThreadPoolExecutor
 from tornado.ioloop import IOLoop
@@ -413,7 +414,9 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
         hostname = self.get_hostname()
         port = self.get_port()
         username = self.get_value('username')
-        password = self.get_argument('password', u'')
+        # 修改处，密码base64解密
+        password = base64.b64decode(self.get_argument('password', u''))
+        print(password)
         privatekey, filename = self.get_privatekey()
         passphrase = self.get_argument('passphrase', u'')
         totp = self.get_argument('totp', u'')
