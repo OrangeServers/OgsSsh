@@ -192,6 +192,12 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
         active[type] ? active[type].call(this, othis) : '';
     });
 
+    // element.on('tab(demo)', function(data){
+    //   console.log(this); //当前Tab标题所在的原始DOM元素
+    //   console.log(data.index); //得到当前Tab的所在下标
+    //   console.log(data.elem); //得到当前的Tab大容器
+    //   $(this).css('background-color','red')
+    // });
 
 });
 
