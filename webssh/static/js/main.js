@@ -182,7 +182,7 @@ jQuery(function($){
     var cols = parseInt(window.innerWidth / style.width - 30, 10) - 1;
 
     // 修改处，修改终端高度
-    var rows = parseInt(window.innerHeight / style.height - 6, 10);
+    var rows = parseInt(window.innerHeight / style.height - 5, 10);
     return {'cols': cols, 'rows': rows};
   }
 
