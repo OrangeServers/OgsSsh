@@ -60,6 +60,11 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
                             leaf: "layui-icon-template-1"  //叶子节点
                         }
                     }]
+                    , menubar: true
+                    , menubarTips: {
+                        toolbar: [],  //依附工具栏
+                        group: ["moveDown", "moveUp", "refresh", "searchNode"] //按钮组
+                    }
                 });
             }
         })
