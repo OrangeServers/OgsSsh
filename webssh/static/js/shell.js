@@ -40,32 +40,34 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
             showLine: true,
             edit: ['add', 'update', 'del'],
             success: function (res) {
-                let data = res['host']
-                dtree.render({
-                    elem: '#orange-fx1'
-                    , id: 'demoId1'
-                    , data: data
-                    , iconfont: ["layui-icon"]
-                    , iconfontStyle: [{
-                        fnode: {
-                            node: {
-                                open: "dtree-icon-jia1"
-                            }
-                        },
-                        snode: {  //二级节点
-                            node: {  //非叶子节点
-                                // open:"",  //节点展开
-                                // close:""  //节点关闭
+                if (res['code'] === 0) {
+                    let data = res['host']
+                    dtree.render({
+                        elem: '#orange-fx1'
+                        , id: 'demoId1'
+                        , data: data
+                        , iconfont: ["layui-icon"]
+                        , iconfontStyle: [{
+                            fnode: {
+                                node: {
+                                    open: "dtree-icon-jia1"
+                                }
                             },
-                            leaf: "layui-icon-template-1"  //叶子节点
+                            snode: {  //二级节点
+                                node: {  //非叶子节点
+                                    // open:"",  //节点展开
+                                    // close:""  //节点关闭
+                                },
+                                leaf: "layui-icon-template-1"  //叶子节点
+                            }
+                        }]
+                        , menubar: true
+                        , menubarTips: {
+                            toolbar: [],  //依附工具栏
+                            group: ["moveDown", "moveUp", "refresh", "searchNode"] //按钮组
                         }
-                    }]
-                    , menubar: true
-                    , menubarTips: {
-                        toolbar: [],  //依附工具栏
-                        group: ["moveDown", "moveUp", "refresh", "searchNode"] //按钮组
-                    }
-                });
+                    });
+                }
             }
         })
     }
@@ -92,73 +94,83 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
                 dataType: "JSON",
                 data: {'name': $.cookie('username')},
                 success: function (res) {
-                    let name_list = res['msg']
-                    let sys_name_list = ''
-                    for (let i of name_list) {
-                        sys_name_list += '<input type="radio" name="sex" value="' + i + '" title="' + i + '" checked="">'
-                    }
-                    let select_sys_user = '<form class="layui-form" onsubmit="return false">\n' +
-                        '  <div class="layui-form-item">\n' +
-                        // '    <label class="layui-form-label">用户</label>\n' +
-                        '    <div class="layui-input-block" style="margin-left: 5px;">\n' +
-                        sys_name_list +
-                        '    </div>\n' +
-                        '  </div>\n' +
-                        '  <div class="layui-form-item" style="position: absolute;right: 120px;bottom: 0px;">\n' +
-                        '    <div class="layui-input-block">\n' +
-                        '      <button id="sys_user_conn" type="submit" class="layui-btn layui-bg-blue" lay-submit="" lay-filter="demo1">确认</button>\n' +
-                        '      <button id="sys_user_exit" type="submit" class="layui-btn layui-bg-red" lay-submit="" lay-filter="demo1">取消</button>\n' +
-                        '    </div>\n' +
-                        '  </div>\n' +
-                        '</form>'
-
-                    let user_open = layer.open({
-                        type: 1,
-                        skin: 'layui-layer-rim', //加上边框
-                        area: ['420px', '240px'], //宽高
-                        content: select_sys_user
-                    });
-                    layui.form.render()
-                    $('#sys_user_exit').click(function () {
-                        layer.close(user_open)
-                    })
-                    $('#sys_user_conn').click(function () {
-                        let user_name = $('.layui-form').serializeArray()[0]['value']
-                        if (user_name === null) {
-                            layer.msg('无可执行系统用户', {icon: 7});
-                            layer.close(user_open)
-                        } else {
-                            $.ajax({
-                                type: "POST",
-                                url: ogs_backend_url + "/server/host/list",
-                                dataType: "JSON",
-                                data: {'type': 'host_alias', 'alias': obj.param['context']},
-                                success: function (res) {
-                                    let host_data = res
-                                    $.ajax({
-                                        type: "POST",
-                                        url: ogs_backend_url + "/server/sys/user/list",
-                                        dataType: "JSON",
-                                        data: {'type': 'user_alias', 'alias': user_name},
-                                        success: function (res2) {
-                                            if (res2['host_key'] !== null) {
-                                                wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], '', res2['host_key'])
-                                                layer.close(user_open)
-                                            } else {
-                                                if (res2['host_password'] !== null) {
-                                                    wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], res2['host_password'])
-                                                    layer.close(user_open)
-                                                } else {
-                                                    layer.msg('该用户未设定登录密码和key')
-                                                    layer.close(user_open)
-                                                }
-                                            }
-                                        }
-                                    })
-                                }
-                            })
+                    if (res['code'] === 0) {
+                        let name_list = res['msg']
+                        let sys_name_list = ''
+                        for (let i of name_list) {
+                            sys_name_list += '<input type="radio" name="sex" value="' + i + '" title="' + i + '" checked="">'
                         }
-                    })
+                        let select_sys_user = '<form class="layui-form" onsubmit="return false">\n' +
+                            '  <div class="layui-form-item">\n' +
+                            // '    <label class="layui-form-label">用户</label>\n' +
+                            '    <div class="layui-input-block" style="margin-left: 5px;">\n' +
+                            sys_name_list +
+                            '    </div>\n' +
+                            '  </div>\n' +
+                            '  <div class="layui-form-item" style="position: absolute;right: 120px;bottom: 0px;">\n' +
+                            '    <div class="layui-input-block">\n' +
+                            '      <button id="sys_user_conn" type="submit" class="layui-btn layui-bg-blue" lay-submit="" lay-filter="demo1">确认</button>\n' +
+                            '      <button id="sys_user_exit" type="submit" class="layui-btn layui-bg-red" lay-submit="" lay-filter="demo1">取消</button>\n' +
+                            '    </div>\n' +
+                            '  </div>\n' +
+                            '</form>'
+
+                        let user_open = layer.open({
+                            type: 1,
+                            skin: 'layui-layer-rim', //加上边框
+                            area: ['420px', '240px'], //宽高
+                            content: select_sys_user
+                        });
+                        layui.form.render()
+                        $('#sys_user_exit').click(function () {
+                            layer.close(user_open)
+                        })
+                        $('#sys_user_conn').click(function () {
+                            let user_name = $('.layui-form').serializeArray()[0]['value']
+                            if (user_name === null) {
+                                layer.msg('无可执行系统用户', {icon: 7});
+                                layer.close(user_open)
+                            } else {
+                                $.ajax({
+                                    type: "POST",
+                                    url: ogs_backend_url + "/server/host/list",
+                                    dataType: "JSON",
+                                    data: {'type': 'host_alias', 'alias': obj.param['context']},
+                                    success: function (res) {
+                                        if (res['code'] === 0) {
+                                            let host_data = res
+                                            $.ajax({
+                                                type: "POST",
+                                                url: ogs_backend_url + "/server/sys/user/list",
+                                                dataType: "JSON",
+                                                data: {'type': 'user_alias', 'alias': user_name},
+                                                success: function (res2) {
+                                                    if (res2['code'] === 0) {
+                                                        if (res2['host_key'] !== null) {
+                                                            wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], '', res2['host_key'])
+                                                            layer.close(user_open)
+                                                        } else {
+                                                            if (res2['host_password'] !== null) {
+                                                                wssh.connect(termid, csname, host_data['host_ip'], host_data['host_port'], res2['host_user'], res2['host_password'])
+                                                                layer.close(user_open)
+                                                            } else {
+                                                                layer.msg('该用户未设定登录密码和key')
+                                                                layer.close(user_open)
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            })
+                                        } else if (res['code'] === 201) {
+                                            layer.alert('更新失败，数据获取接口错误', {skin: 'layui-layer-hui'})
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    } else if (res['code'] === 201) {
+                        console.log('接口数据获取错误')
+                    }
                 }
             })
 
