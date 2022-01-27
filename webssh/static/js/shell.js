@@ -5,14 +5,19 @@
 const ogs_backend_url = ''
 
 $(function () {
-    let url_local = window.location.protocol + window.location.host + '/login.html'
+    // let url_local = window.location.protocol + window.location.host + '/login.html'
     // document.write(returnCitySN["cip"]+','+returnCitySN["cname"])
-    if ($.cookie('username') === undefined) {
-        window.location.href = '/login.html'
-    } else {
-        // $(".orange-title-name").html($(".orange-title-name").html().replace("admin",$.cookie('username')))
-        // $('.layui-header').css('background-color', '#2261A1')
-    }
+    $.ajax({
+        type: "POST",
+        url: ogs_backend_url + "/local/app_auth_ck",
+        dataType: "JSON",
+        success: function (res) {
+            if (res['code'] === 3) {
+                window.location.href = '/login.html'
+            }
+        }
+    })
+
 });
 
 layui.config({
@@ -36,7 +41,6 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
             type: "POST",
             url: ogs_backend_url + "/local/data",
             dataType: "JSON",
-            data: {'name': $.cookie('username')},
             showLine: true,
             edit: ['add', 'update', 'del'],
             success: function (res) {
@@ -92,7 +96,6 @@ layui.use(['tree', 'util', 'upload', 'element', 'layer', 'dtree'], function () {
                 type: "POST",
                 url: ogs_backend_url + "/server/sys/user/name_list",
                 dataType: "JSON",
-                data: {'name': $.cookie('username')},
                 success: function (res) {
                     if (res['code'] === 0) {
                         let name_list = res['msg']
