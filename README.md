@@ -7,12 +7,15 @@ orangeservers的web终端项目，整体部署和展示文档在[OgsDocument](ht
 
 ### 部署
 
+查看不了图片或者克隆慢可以去gitee的仓库，[这是地址](https://gitee.com/xuwei777/OgsSsh)
+
 只能配合orangeservers其他组件才能正常使用，不建议单独部署（单独部署无法正常使用）
 
 ```shell
-# 下载服务压缩包
+# 克隆OgsSsh安装包
 git clone https://github.com/OrangeServers/OgsSsh.git
-cd OgsSsh
+
+# 也可以直接下载安装压缩包 wget http://download.stisd.cn/ogsssh/OgsSsh_v1.0.tar.gz
 
 # 安装python包文件
 pip3 install -r requirements.txt
